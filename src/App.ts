@@ -28,13 +28,13 @@ class App {
      * @this App
      */
     private constructor() {
-        this._app = express();
-        this._port = 25565;
-        this._api = {};
-        this.clientVersion = "";
-        this.serverVersion = "";
-        this.terminating = false;
-        this.httpServer = null;
+        this._app               = express();
+        this._port              = 25565;
+        this._api               = {};
+        this.clientVersion      = "";
+        this.serverVersion      = "";
+        this.terminating        = false;
+        this.httpServer         = null;
     }
 
     /**
@@ -63,8 +63,8 @@ class App {
 
         // GET-method for game canvas (HTML5 webgl)
         this._app.get("/game/canvas", (req, res) => {
-            const ip: string | string[] | undefined = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
-            const data: JadeOptions                 = {
+            const ip: string | string[] | undefined     = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
+            const data: JadeOptions                     = {
                 name: "leoska",
             };
 
@@ -73,6 +73,7 @@ class App {
 
         // Обработка POST-запросов классами API
         this._app.post("/api/:apiName.json", (req, res) => {
+            // req.headers["x-forwarded-for"] <-- этот заголовок обычно вкладывается NGINX'ом
             const ip: string | string[] | undefined = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
 
             this.handleRequest(req.params.apiName, req.body, ip).then((data: any) => {
@@ -151,9 +152,8 @@ class App {
                 next();
             });
 
-            walker.on("errors", () => {
-                console.error("ERRORORORRO");
-                reject(new Error("WALKER_FAILED"));
+            walker.on("errors", (err) => {
+                reject(new Error(`WALKER_FAILED: ${err}`));
             });
 
             walker.on("end", () => {
@@ -173,10 +173,11 @@ class App {
      * @param {string | string[] | undefined} ip
      */
     private async handleRequest(apiName: string, reqBody: object, ip: string | string[] | undefined) {
+        // Если сервер останавливает работу
         if (this.terminating) {
             return {
                 error: {
-                    code: "TERMINATING",
+                    code: "SERVER_TERMINATING",
                 },
             };
         }

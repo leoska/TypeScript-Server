@@ -18,6 +18,7 @@
   "author": "leoska",
   "license": "MIT",
   "devDependencies": {
+    "@types/async": "^3.0.1",
     "@types/cors": "^2.8.5",
     "@types/express": "^4.17.0",
     "@types/jade": "0.0.30",
@@ -26,14 +27,17 @@
     "babel-core": "^6.26.3",
     "babel-loader": "^8.0.6",
     "babel-preset-env": "^1.7.0",
-    "cors": "^2.8.5",
-    "express": "^4.17.1",
-    "jade": "^1.11.0",
     "nodemon": "^1.19.1",
     "ts-node": "^8.3.0",
     "tslint": "^5.18.0",
-    "typescript": "^3.5.2",
-    "walk": "^2.3.14"
+    "typescript": "^3.5.2"
   },
-  "dependencies": {}
+  "dependencies": {
+    "async": "^3.1.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "jade": "^1.11.0",
+    "os": "^0.1.1",
+    "walk": "^2.3.14"
+  }
 }
