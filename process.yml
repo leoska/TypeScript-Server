@@ -1,0 +1,11 @@
+apps:
+  - script: npm
+    args: start
+    interpreter_args: --harmony
+    name: Rich Lands
+    log_date_format: YYYY-MM-DD HH:mm:ss
+    combine_logs: true
+    out_file: ./logs/server-out.log
+    err_file: ./logs/server-err.log
+    env:
+      NODE_ENV: dev
