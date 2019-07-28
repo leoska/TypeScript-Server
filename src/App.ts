@@ -4,17 +4,15 @@
  */
 import * as cors from "cors";
 import express from "express";
-import http, { Server } from "http";
 import jade, { JadeOptions } from "jade";
-import { ListenOptions } from "net";
 import path from "path";
 import walk from "walk";
-// import https from "https";
+import HttpServer from "./HttpServer";
 
 class App {
     private static _instance: App;
     private _app: express.Application;
-    private httpServer: Server | null;
+    private httpServer: HttpServer | null;
     private readonly _port: number;
     private _api: any;
     private terminating: boolean;
@@ -58,7 +56,7 @@ class App {
      * @returns {void}
      */
     public run(): void {
-        console.info("hello!");
+        console.info("Application starting...");
         this.initApi();
 
         // GET-method for game canvas (HTML5 webgl)
@@ -86,32 +84,11 @@ class App {
             });
         });
 
-        // Запускаем сервер
-        this.httpServer = http.createServer(this._app);
+        // Создаем инстант http-сервера
+        this.httpServer = new HttpServer(this._app);
 
-        const options: ListenOptions = {
-            host: "0.0.0.0",
-            port: this._port,
-        };
-
-        this.httpServer.listen(options, () => {
-            console.log("Server run on port: " + this._port);
-        });
-
-        this.httpServer.on("error", (err: Error) => {
-            if (err) {
-                throw new Error(err.message);
-            }
-        });
-
-
-        // this._app.listen(this._port, (err) => {
-        //     if (err) {
-        //         throw new Error(err);
-        //     } else {
-        //         console.log("Server run on port: " + this._port);    
-        //     }
-        // });
+        // Запускаем http-сервер
+        this.httpServer.run();
     }
 
     /**
@@ -181,7 +158,6 @@ class App {
                 },
             };
         }
-
 
         try {
             return await this.buildRequest(apiName, reqBody, ip);
