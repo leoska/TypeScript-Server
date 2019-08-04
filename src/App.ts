@@ -6,7 +6,7 @@ import * as cors from "cors";
 import express from "express";
 import jade, { JadeOptions } from "jade";
 import path from "path";
-import walk from "walk";
+import walk, { Walker } from "walk";
 import HttpServer from "./HttpServer";
 
 class App {
@@ -69,8 +69,8 @@ class App {
             res.send(jade.renderFile("./public/vk/jade/index.jade", data));
         });
 
-        // Обработка POST-запросов классами API
-        this._app.post("/api/:apiName.json", (req, res) => {
+        // Обработка (ALL-METHOD) POST-запросов классами API
+        this._app.all("/api/:apiName.json", (req, res) => {
             // req.headers["x-forwarded-for"] <-- этот заголовок обычно вкладывается NGINX'ом
             const ip: string | string[] | undefined = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
 
@@ -111,8 +111,8 @@ class App {
      */
     private initApi(): any {
         return new Promise((resolve, reject) => {
-            const apiRoot   = path.join(__dirname, "api");
-            const walker    = walk.walk(apiRoot);
+            const apiRoot: string   = path.join(__dirname, "api");
+            const walker: Walker    = walk.walk(apiRoot);
 
             walker.on("file", (root, fileStats, next) => {
                 if (/^[^_].*\.js$/.test(fileStats.name)) {
